@@ -14,6 +14,10 @@
 		0430846B2293400800DA317A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 043084692293400800DA317A /* LaunchScreen.storyboard */; };
 		043084762293400800DA317A /* FindTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043084752293400800DA317A /* FindTests.swift */; };
 		043084812293400800DA317A /* FindUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043084802293400800DA317A /* FindUITests.swift */; };
+		0430848F22934AF000DA317A /* LocationSearchTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0430848E22934AF000DA317A /* LocationSearchTable.swift */; };
+		0493E82B229A26ED00916014 /* begin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82A229A26ED00916014 /* begin.mp3 */; };
+		0493E82D229A26F900916014 /* cold.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82C229A26F900916014 /* cold.mp3 */; };
+		0493E82F229A270000916014 /* hot.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82E229A270000916014 /* hot.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +51,10 @@
 		0430847C2293400800DA317A /* FindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		043084802293400800DA317A /* FindUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindUITests.swift; sourceTree = "<group>"; };
 		043084822293400800DA317A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0430848E22934AF000DA317A /* LocationSearchTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTable.swift; sourceTree = "<group>"; };
+		0493E82A229A26ED00916014 /* begin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = begin.mp3; sourceTree = "<group>"; };
+		0493E82C229A26F900916014 /* cold.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cold.mp3; sourceTree = "<group>"; };
+		0493E82E229A270000916014 /* hot.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hot.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +89,9 @@
 				043084742293400800DA317A /* FindTests */,
 				0430847F2293400800DA317A /* FindUITests */,
 				0430845E2293400600DA317A /* Products */,
+				0493E82A229A26ED00916014 /* begin.mp3 */,
+				0493E82C229A26F900916014 /* cold.mp3 */,
+				0493E82E229A270000916014 /* hot.mp3 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +111,7 @@
 				043084602293400600DA317A /* AppDelegate.swift */,
 				043084622293400600DA317A /* ViewController.swift */,
 				043084642293400600DA317A /* Main.storyboard */,
+				0430848E22934AF000DA317A /* LocationSearchTable.swift */,
 				043084672293400800DA317A /* Assets.xcassets */,
 				043084692293400800DA317A /* LaunchScreen.storyboard */,
 				0430846C2293400800DA317A /* Info.plist */,
@@ -187,12 +199,21 @@
 		043084552293400600DA317A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					button,
+					"map kit view",
+				);
 				LastSwiftUpdateCheck = 1020;
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = Mac;
 				TargetAttributes = {
 					0430845C2293400600DA317A = {
 						CreatedOnToolsVersion = 10.2.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					043084702293400800DA317A = {
 						CreatedOnToolsVersion = 10.2.1;
@@ -229,6 +250,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0493E82F229A270000916014 /* hot.mp3 in Resources */,
+				0493E82B229A26ED00916014 /* begin.mp3 in Resources */,
+				0493E82D229A26F900916014 /* cold.mp3 in Resources */,
 				0430846B2293400800DA317A /* LaunchScreen.storyboard in Resources */,
 				043084682293400800DA317A /* Assets.xcassets in Resources */,
 				043084662293400600DA317A /* Main.storyboard in Resources */,
@@ -256,6 +280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0430848F22934AF000DA317A /* LocationSearchTable.swift in Sources */,
 				043084632293400600DA317A /* ViewController.swift in Sources */,
 				043084612293400600DA317A /* AppDelegate.swift in Sources */,
 			);
@@ -433,6 +458,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FA9Q9Q34W5;
 				INFOPLIST_FILE = Find/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -450,6 +476,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FA9Q9Q34W5;
 				INFOPLIST_FILE = Find/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
