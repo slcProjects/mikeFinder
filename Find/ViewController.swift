@@ -19,7 +19,11 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var cancelButton: UIButton!
     var selectedPin: MKPlacemark?
+    var selectedPinTwo: MKPlacemark?
     var findingPin: MKPlacemark?
+    var findingHash = [MKPlacemark : NSURL]()
+
+    var pinCount = 0
     var distance = 0
     var lastLocation: CLLocation?
     var finding = false
@@ -50,7 +54,7 @@ class ViewController: UIViewController {
         searchBar.placeholder = "Search for places"
         navigationItem.titleView = resultSearchController?.searchBar
         resultSearchController.hidesNavigationBarDuringPresentation = false
-        resultSearchController.dimsBackgroundDuringPresentation = true
+        resultSearchController.obscuresBackgroundDuringPresentation = true
         definesPresentationContext = true
         locationSearchTable.mapView = mapView
         locationSearchTable.handleMapSearchDelegate = self
@@ -76,12 +80,13 @@ class ViewController: UIViewController {
     @objc func longPressed(gestureRecognized: UIGestureRecognizer){
         let touchpoint = gestureRecognized.location(in: self.mapView)
         let location = mapView.convert(touchpoint, toCoordinateFrom: self.mapView)
-        
+
         let annotation = MKPointAnnotation()
         annotation.title = "Latitude: \(location.latitude)"
         annotation.subtitle = "Longitude: \(location.longitude)"
         annotation.coordinate = location
         mapView.addAnnotation(annotation)
+        selectedPin = MKPlacemark(coordinate: location)
         
         
     }
@@ -110,17 +115,40 @@ class ViewController: UIViewController {
         finding = false;
         mapView.userTrackingMode = .none
         locationManager.stopUpdatingLocation()
+        mapView.removeAnnotations(mapView.annotations)
+
         cancelButton.isHidden = true
     }
     @objc func getDirections(){
-
-        print("startDirections")
-        findingPin = selectedPin
         finding = true;
+        print("finding is true")
         mapView.userTrackingMode = .followWithHeading
         locationManager.startUpdatingLocation()
+       // locationManager.startMonitoringSignificantLocationChanges()
+        self.locationManager.distanceFilter = 10.0
         cancelButton.isHidden = false
 
+    }
+    
+    @objc func getDirectionsTwo(){
+        
+        print("startDirectionsTwo")
+        findingHash.updateValue(coldSound, forKey: selectedPinTwo!)
+        findingPin = selectedPinTwo
+        print("findingPin", findingPin?.name ?? "no name")
+        getDirections()
+        
+    }
+    
+    @objc func getDirectionsOne(){
+        
+        print("startDirectionsOne")
+        findingPin = selectedPin
+        findingHash.updateValue(hotSound, forKey: selectedPin!)
+        print("findingPin", findingPin?.name ?? "no name")
+        getDirections()
+
+        
     }
     
     func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
@@ -165,8 +193,11 @@ class ViewController: UIViewController {
             else{
                 audioPlayer = try AVAudioPlayer(contentsOf: coldSound as URL) //If not in asset
             }
+            sleep(3)
+            //
             if(degree>40 && degree<130){
                 audioPlayer.pan = 1.0 // right headphone
+//                audioPlayer.
                 audioPlayer.prepareToPlay() // make sure to add this line so audio will play
                 audioPlayer.play()
             }
@@ -191,6 +222,7 @@ class ViewController: UIViewController {
     
 }
 
+
 extension ViewController : CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -203,19 +235,34 @@ extension ViewController : CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
         print("change")
+       // print("finding ",findingPin!.location!.coordinate.latitude, " ", findingPin!.location!.coordinate.latitude)
+       // print("me ",locations.last!.coordinate.latitude, " ", locations.last!.coordinate.longitude)
         guard let location = locations.first else { return }
         let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         let region = MKCoordinateRegion(center: location.coordinate, span: span)
         mapView.setRegion(region, animated: true)
+        for (pinToFind, soundToFind) in findingHash {
+            print("pin", pinToFind.title ?? "no title")
+              do {
+            sleep(4)
+            audioPlayer = try AVAudioPlayer(contentsOf: soundToFind as URL) //If not in asset
+            audioPlayer.pan = 0 // right headphone
+            audioPlayer.prepareToPlay() // make sure to add this line so audio will play
+        
+            audioPlayer.play()
+              } catch{
+                print("error")
+            }
+        }
         if(finding){
+            
             if(lastLocation != nil){
                 guard locations.last != nil else { return }
                 if let findingLocation = findingPin?.location {
                    // var newDistance = location.distance(from: lastLocation!)
                     let coords = findingLocation.coordinate
-                   // print("finding ",coords.latitude, " ", coords.longitude)
-                    //print("me ",location.coordinate.latitude, " ", location.coordinate.longitude)
-                    print("last ",lastLocation!.coordinate.latitude, " ", lastLocation!.coordinate.longitude)
+              
+                   // print("last ",lastLocation!.coordinate.latitude, " ", lastLocation!.coordinate.longitude)
                     let finder = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
                     let direction = getBearingBetweenTwoPoints1(point1: lastLocation!, point2: location)
                     let baring = getBearingBetweenTwoPoints1(point1: location, point2: finder)
@@ -231,9 +278,11 @@ extension ViewController : CLLocationManagerDelegate {
                         else{
                             playSound(dir: direction,bar: baring, hot: true)
                         }
+                        
                     }
                     else{
                         do {
+                            sleep(3)
                             audioPlayer = try AVAudioPlayer(contentsOf: beginSound as URL) //If not in asset
                             audioPlayer.pan = 0 // right headphone
                             audioPlayer.prepareToPlay() // make sure to add this line so audio will play
@@ -267,9 +316,16 @@ extension ViewController: HandleMapSearch {
     
     func dropPinZoomIn(placemark: MKPlacemark){
         // cache the pin
-        selectedPin = placemark
+        print("slected pin", pinCount )
+        if(pinCount == 0){
+
+            selectedPin = placemark
+        }
+        else{
+            selectedPinTwo = placemark
+        }
         // clear existing pins
-        mapView.removeAnnotations(mapView.annotations)
+      //  mapView.removeAnnotations(mapView.annotations)
         let annotation = MKPointAnnotation()
         annotation.coordinate = placemark.coordinate
         annotation.title = placemark.name
@@ -293,18 +349,31 @@ extension ViewController : MKMapViewDelegate {
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
 
       //  exit(0);
+      
         guard !(annotation is MKUserLocation) else { return nil }
         let reuseId = "pin"
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinCount+=1
+            print("pinCount is " , pinCount)
         }
         pinView?.pinTintColor = UIColor.orange
         pinView?.canShowCallout = true
         let smallSquare = CGSize(width: 30, height: 30)
         let button = UIButton(frame: CGRect(origin: CGPoint.zero, size: smallSquare))
-        button.setBackgroundImage(UIImage(named: "car"), for: .normal)
-        button.addTarget(self, action: #selector(ViewController.getDirections), for: .touchUpInside)
+        // could throw a counter up top to change image.
+        if(pinCount == 1){
+            button.setBackgroundImage(UIImage(named: "car"), for: .normal)
+            button.addTarget(self, action: #selector(ViewController.getDirectionsOne), for: .touchUpInside)
+
+        }
+        else{
+            button.setBackgroundImage(UIImage(named: "sound"), for: .normal)
+            button.addTarget(self, action: #selector(ViewController.getDirectionsTwo), for: .touchUpInside)
+
+        }
+
         pinView?.leftCalloutAccessoryView = button
         
         return pinView
