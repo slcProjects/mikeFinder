@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04022AB62648488E00BC22F1 /* amadeus.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04022AB52648488E00BC22F1 /* amadeus.mp3 */; };
 		043084612293400600DA317A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043084602293400600DA317A /* AppDelegate.swift */; };
 		043084632293400600DA317A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043084622293400600DA317A /* ViewController.swift */; };
 		043084662293400600DA317A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 043084642293400600DA317A /* Main.storyboard */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		04022AB52648488E00BC22F1 /* amadeus.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = amadeus.mp3; sourceTree = "<group>"; };
 		0430845D2293400600DA317A /* Find.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Find.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		043084602293400600DA317A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		043084622293400600DA317A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -92,6 +94,7 @@
 				0493E82A229A26ED00916014 /* begin.mp3 */,
 				0493E82C229A26F900916014 /* cold.mp3 */,
 				0493E82E229A270000916014 /* hot.mp3 */,
+				04022AB52648488E00BC22F1 /* amadeus.mp3 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -256,6 +259,7 @@
 				0430846B2293400800DA317A /* LaunchScreen.storyboard in Resources */,
 				043084682293400800DA317A /* Assets.xcassets in Resources */,
 				043084662293400600DA317A /* Main.storyboard in Resources */,
+				04022AB62648488E00BC22F1 /* amadeus.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

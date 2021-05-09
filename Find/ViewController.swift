@@ -32,9 +32,9 @@ class ViewController: UIViewController {
     var heading = CLHeading()
     @IBOutlet weak var mapView: MKMapView!
     var audioPlayer: AVAudioPlayer!
-    let hotSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "hot", ofType: "mp3")!) // If sound not in an assest
+    let hotSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "amadeus", ofType: "mp3")!) // If sound not in an assest
     let coldSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "cold", ofType: "mp3")!) // If sound not in an assest
-    let beginSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "begin", ofType: "mp3")!) // If sound not in an assest
+    let beginSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "amadeus", ofType: "mp3")!) // If sound not in an assest
 
   //  let alertSound = NSDataAsset(name: "intro") // If sound is in an Asset
 
@@ -119,6 +119,7 @@ class ViewController: UIViewController {
         mapView.removeAnnotations(mapView.annotations)
 
         cancelButton.isHidden = true
+        audioPlayer.stop()
     }
     @objc func getDirections(){
         finding = true;
@@ -188,33 +189,84 @@ class ViewController: UIViewController {
         
         print("degree", degree)
         do {
-            if(hot){
-                audioPlayer = try AVAudioPlayer(contentsOf: hotSound as URL) //If not in asset
+         //  here we can increase or decrease volume
+             
+             if(hot){
+               // audioPlayer = try AVAudioPlayer(contentsOf: hotSound as URL) //If not in asset
+                if(audioPlayer.volume <= 1.0)
+                {
+                    audioPlayer.volume += 0.1;
+                    print("hot " , audioPlayer.volume)
+                }
             }
             else{
-                audioPlayer = try AVAudioPlayer(contentsOf: coldSound as URL) //If not in asset
+              //  audioPlayer = try AVAudioPlayer(contentsOf: coldSound as URL) //If not in asset
+                if(audioPlayer.volume > 0.0)
+                {
+                audioPlayer.volume -= 0.1;
+                print("cold " , audioPlayer.volume)
+                }
             }
             sleep(3)
-            //
+            
+            // need to change pan so that is uses degrees instead
+            
+            if(degree > 0)
+            {
+                if(degree <= 90)
+                {
+                    audioPlayer.pan = Float(degree/90)
+                }
+                else
+                {
+                    audioPlayer.pan = Float(abs(degree/90-2))
+                }
+            }
+            else
+            {
+                if(degree <= -90)
+                {
+                    audioPlayer.pan = Float(degree/90)
+                }
+                else
+                {
+                    audioPlayer.pan = -(Float(degree/90+2))
+                }
+            }
+          
+            
+            print("pan ", audioPlayer.pan)
+            
+            /*
+             
+             
             if(degree>40 && degree<130){
                 audioPlayer.pan = 1.0 // right headphone
 //                audioPlayer.
+                /*
                 audioPlayer.prepareToPlay() // make sure to add this line so audio will play
                 audioPlayer.play()
+                */
             }
             else if(degree<(-40) && degree>(-130)){
                 audioPlayer.pan = -1.0 //left headphone
               // audioPlayer.pan = 1.0 // right headphone
+                /*
                 audioPlayer.prepareToPlay() // make sure to add this line so audio will play
                 audioPlayer.play()
+            */
             }
             else{
                 audioPlayer.pan = 1.0 // right headphone
+                /*
                 audioPlayer.prepareToPlay() // make sure to add this line so audio will play
                 audioPlayer.play()
+ */
             }
-            
-        } catch  {
+           
+        */
+        }
+            catch  {
             print("error")
         }
     }
@@ -246,11 +298,15 @@ extension ViewController : CLLocationManagerDelegate {
             print("pin", pinToFind.title ?? "no title")
               do {
             sleep(4)
+                
+                /*
             audioPlayer = try AVAudioPlayer(contentsOf: soundToFind as URL) //If not in asset
-            audioPlayer.pan = 0 // right headphone
+            audioPlayer.pan = 0
+         
             audioPlayer.prepareToPlay() // make sure to add this line so audio will play
         
             audioPlayer.play()
+ */
               } catch{
                 print("error")
             }
@@ -267,11 +323,11 @@ extension ViewController : CLLocationManagerDelegate {
                     let finder = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
                     let direction = getBearingBetweenTwoPoints1(point1: lastLocation!, point2: location)
                     let baring = getBearingBetweenTwoPoints1(point1: location, point2: finder)
-                    print("baring ", baring)
-                    print("direction ", direction)
+                 //**   print("baring ", baring)
+                 //***   print("direction ", direction)
                     
                     let distanceInMeters = location.distance(from: finder) // result is in meters
-                    print("distance ", distanceInMeters)
+                   // *** print("distance ", distanceInMeters)
                     if(distance > 0){
                         if(distance < Int(distanceInMeters)){
                             playSound(dir: direction,bar: baring, hot: false)
@@ -283,7 +339,8 @@ extension ViewController : CLLocationManagerDelegate {
                     }
                     else{
                         do {
-                            sleep(3)
+                            sleep(1)
+                            print("begin");
                             audioPlayer = try AVAudioPlayer(contentsOf: beginSound as URL) //If not in asset
                             audioPlayer.pan = 0 // right headphone
                             audioPlayer.prepareToPlay() // make sure to add this line so audio will play
