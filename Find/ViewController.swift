@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     let locationManager = CLLocationManager()
     var heading = CLHeading()
     @IBOutlet weak var mapView: MKMapView!
-    var audioPlayer = AVAudioPlayer()
+    var audioPlayer: AVAudioPlayer!
     let hotSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "hot", ofType: "mp3")!) // If sound not in an assest
     let coldSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "cold", ofType: "mp3")!) // If sound not in an assest
     let beginSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "begin", ofType: "mp3")!) // If sound not in an assest
@@ -46,6 +46,7 @@ class ViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
         resultSearchController = UISearchController(searchResultsController: locationSearchTable)
         resultSearchController.searchResultsUpdater = locationSearchTable
