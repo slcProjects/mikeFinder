@@ -18,10 +18,15 @@ protocol HandleMapSearch: class {
 class ViewController: UIViewController {
     
     @IBOutlet weak var cancelButton: UIButton!
+    
+    @IBOutlet weak var listenButton: UIButton!
     var selectedPin: MKPlacemark?
     var selectedPinTwo: MKPlacemark?
     var findingPin: MKPlacemark?
     var findingHash = [MKPlacemark : NSURL]()
+    
+    var volume: Float = 0.5
+    var pan:Float = 0
 
     var pinCount = 0
     var distance = 0
@@ -29,22 +34,25 @@ class ViewController: UIViewController {
     var finding = false
     var resultSearchController: UISearchController!
     let locationManager = CLLocationManager()
+    //locationManager.allowsBackgroundLocationUpdates = true
     var heading = CLHeading()
     @IBOutlet weak var mapView: MKMapView!
+    
     var audioPlayer: AVAudioPlayer!
     let hotSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "amadeus", ofType: "mp3")!) // If sound not in an assest
-    let coldSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "cold", ofType: "mp3")!) // If sound not in an assest
-    let beginSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "amadeus", ofType: "mp3")!) // If sound not in an assest
+    let locateSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "locateSound", ofType: "mp3")!) // If sound not in an assest
 
-  //  let alertSound = NSDataAsset(name: "intro") // If sound is in an Asset
+    let coldSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "cold", ofType: "mp3")!) // If sound not in an assest
+    let beginSound = NSURL(fileURLWithPath: Bundle.main.path(forResource: "begin", ofType: "mp3")!) // If sound not in an assest
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestWhenInUseAuthorization()
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.pausesLocationUpdatesAutomatically = false
+        locationManager.requestWhenInUseAuthorization() //maybe change
         locationManager.requestLocation()
 
         let locationSearchTable = storyboard!.instantiateViewController(withIdentifier: "LocationSearchTable") as! LocationSearchTable
@@ -60,9 +68,9 @@ class ViewController: UIViewController {
         locationSearchTable.mapView = mapView
         locationSearchTable.handleMapSearchDelegate = self
         mapView.delegate = self
-       /* let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(addWaypoint(longGesture:)))
-        mapView.addGestureRecognizer(longGesture)
-*/
+        mapView.isZoomEnabled = true
+     
+        mapView.sizeToFit()
         let uilpgr = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(gestureRecognized:)))
         
         //long press (2 sec duration)
@@ -79,6 +87,7 @@ class ViewController: UIViewController {
         
     }
     @objc func longPressed(gestureRecognized: UIGestureRecognizer){
+        
         let touchpoint = gestureRecognized.location(in: self.mapView)
         let location = mapView.convert(touchpoint, toCoordinateFrom: self.mapView)
 
@@ -91,16 +100,6 @@ class ViewController: UIViewController {
         
         
     }
-    /*
-    @objc func addWaypoint(longGesture: UIGestureRecognizer) {
-        
-        let touchPoint = longGesture.location(in: mapView)
-        let newCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = newCoordinates
-        mapView.addAnnotation(annotation)
-    }
- */
     
     
     func degreesToRadians(degrees: CGFloat) -> CGFloat {
@@ -110,6 +109,7 @@ class ViewController: UIViewController {
     func radiansToDegress(radians: CGFloat) -> CGFloat {
         return radians * 180 / CGFloat(Double.pi)
     }
+    
     @IBAction func cancelPress(_ sender: Any) {
         print("stopDirections")
         //findingPin = selectedPin
@@ -121,14 +121,38 @@ class ViewController: UIViewController {
         cancelButton.isHidden = true
         audioPlayer.stop()
     }
+    
+    @IBAction func listenPress(_ sender: Any) {
+        print("listen pressed")
+        locationManager.stopUpdatingLocation()
+        locationManager.startUpdatingLocation()
+    }
+    
     @objc func getDirections(){
         finding = true;
         print("finding is true")
-        mapView.userTrackingMode = .followWithHeading
+        sleep(1)
+        do{
+          print("begin");
+          audioPlayer = try AVAudioPlayer(contentsOf: beginSound as URL) //If not in asset
+          audioPlayer.pan = pan
+          audioPlayer.volume = volume
+          audioPlayer.prepareToPlay() // make sure to add this line so audio will play
+          audioPlayer.play()
+            
+        }catch  {
+            print("error")
+        }
+        
+        // mapView.userTrackingMode = .followWithHeading
+        mapView.setUserTrackingMode(MKUserTrackingMode.followWithHeading, animated: true)
         locationManager.startUpdatingLocation()
        // locationManager.startMonitoringSignificantLocationChanges()
-        self.locationManager.distanceFilter = 10.0
+        self.locationManager.distanceFilter = 5.0 // used to be 10
+       // self.locationManager.accuracyAuthorization =
+        print("before cancel button")
         cancelButton.isHidden = false
+        print("after cancel button")
 
     }
     
@@ -184,56 +208,59 @@ class ViewController: UIViewController {
     
     func playSound(dir : Double, bar : Double, hot: Bool) {
       //  let degree = dir - bar
+        print("baring ", bar )
+        print("direction ", dir)
+        
         let firstDegree = (bar - dir).truncatingRemainder(dividingBy: 360)
         let degree = ((firstDegree + 540).truncatingRemainder(dividingBy: 360)) - 180
         
         print("degree", degree)
-        do {
+        //do {
          //  here we can increase or decrease volume
-             
              if(hot){
-               // audioPlayer = try AVAudioPlayer(contentsOf: hotSound as URL) //If not in asset
-                if(audioPlayer.volume <= 1.0)
+                if(volume < 1.0)
                 {
-                    audioPlayer.volume += 0.1;
-                    print("hot " , audioPlayer.volume)
+                    volume += 0.2;
+                    print("hot " , volume)
                 }
             }
             else{
-              //  audioPlayer = try AVAudioPlayer(contentsOf: coldSound as URL) //If not in asset
-                if(audioPlayer.volume > 0.0)
+       
+                if(volume > 0.0)
                 {
-                audioPlayer.volume -= 0.1;
-                print("cold " , audioPlayer.volume)
+                    volume -= 0.2;
+                    print("cold " , volume)
                 }
             }
             sleep(3)
             
-            // need to change pan so that is uses degrees instead
             
-            if(degree > 0)
+            if(degree > 0)  // if destination on the right?
             {
                 if(degree <= 90)
                 {
-                    audioPlayer.pan = Float(degree/90)
+                    pan = Float(degree/90)
                 }
                 else
                 {
-                    audioPlayer.pan = Float(abs(degree/90-2))
+                    pan = Float(abs(degree/90-2))
                 }
             }
-            else
+            else // if destination on the left
             {
-                if(degree <= -90)
+                if(degree >= -90)
                 {
-                    audioPlayer.pan = Float(degree/90)
+                    pan = Float(degree/90)
                 }
                 else
                 {
-                    audioPlayer.pan = -(Float(degree/90+2))
+                    pan = -(Float(degree/90)+2)
                 }
             }
-          
+        audioPlayer.pan = pan
+        audioPlayer.volume = volume
+        audioPlayer.prepareToPlay() // make sure to add this line so audio will play
+        audioPlayer.play()
             
             print("pan ", audioPlayer.pan)
             
@@ -265,15 +292,16 @@ class ViewController: UIViewController {
             }
            
         */
-        }
+      /*  }
             catch  {
             print("error")
-        }
+        }*/
     }
     
  
     
 }
+
 
 
 extension ViewController : CLLocationManagerDelegate {
@@ -294,9 +322,10 @@ extension ViewController : CLLocationManagerDelegate {
         let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         let region = MKCoordinateRegion(center: location.coordinate, span: span)
         mapView.setRegion(region, animated: true)
-        for (pinToFind, soundToFind) in findingHash {
+     //   for (pinToFind, soundToFind) in findingHash {
+        for (pinToFind, _) in findingHash {
             print("pin", pinToFind.title ?? "no title")
-              do {
+            //  do {
             sleep(4)
                 
                 /*
@@ -307,9 +336,9 @@ extension ViewController : CLLocationManagerDelegate {
         
             audioPlayer.play()
  */
-              } catch{
+            /*  } catch{
                 print("error")
-            }
+            }*/
         }
         if(finding){
             
@@ -337,19 +366,32 @@ extension ViewController : CLLocationManagerDelegate {
                         }
                         
                     }
-                    else{
-                        do {
+                    else{ //can move
+                       /* do {
                             sleep(1)
                             print("begin");
                             audioPlayer = try AVAudioPlayer(contentsOf: beginSound as URL) //If not in asset
-                            audioPlayer.pan = 0 // right headphone
+                            audioPlayer.pan = pan
+                            audioPlayer.volume = volume
                             audioPlayer.prepareToPlay() // make sure to add this line so audio will play
                             audioPlayer.play()
+                            print("can move")
                         } catch  {
                             print("error")
-                        }
+                        } */
                     }
                         distance = Int(distanceInMeters)
+                }
+            }
+            else
+            {
+                do{
+                audioPlayer = try AVAudioPlayer(contentsOf: locateSound as URL) //If not in asset
+                }
+                catch
+                {
+                        print("error playing begin")
+                    
                 }
             }
           
@@ -360,11 +402,9 @@ extension ViewController : CLLocationManagerDelegate {
     }
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         heading = newHeading
-        
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        
         print("error:: \(error)")
     }
     
@@ -379,9 +419,9 @@ extension ViewController: HandleMapSearch {
 
             selectedPin = placemark
         }
-        else{
+      /*  else{
             selectedPinTwo = placemark
-        }
+        } */
         // clear existing pins
       //  mapView.removeAnnotations(mapView.annotations)
         let annotation = MKPointAnnotation()
@@ -421,16 +461,18 @@ extension ViewController : MKMapViewDelegate {
         let smallSquare = CGSize(width: 30, height: 30)
         let button = UIButton(frame: CGRect(origin: CGPoint.zero, size: smallSquare))
         // could throw a counter up top to change image.
-        if(pinCount == 1){
-            button.setBackgroundImage(UIImage(named: "car"), for: .normal)
+        //if(pinCount == 1){
+            button.setBackgroundImage(UIImage(named: "sound"), for: .normal)
             button.addTarget(self, action: #selector(ViewController.getDirectionsOne), for: .touchUpInside)
 
-        }
+       // }
+        /*
         else{
             button.setBackgroundImage(UIImage(named: "sound"), for: .normal)
             button.addTarget(self, action: #selector(ViewController.getDirectionsTwo), for: .touchUpInside)
 
         }
+ */
 
         pinView?.leftCalloutAccessoryView = button
         

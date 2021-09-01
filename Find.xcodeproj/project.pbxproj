@@ -19,6 +19,9 @@
 		0493E82B229A26ED00916014 /* begin.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82A229A26ED00916014 /* begin.mp3 */; };
 		0493E82D229A26F900916014 /* cold.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82C229A26F900916014 /* cold.mp3 */; };
 		0493E82F229A270000916014 /* hot.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0493E82E229A270000916014 /* hot.mp3 */; };
+		04DF78B5268CACA000FDDEF5 /* locateSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04DF78B4268CACA000FDDEF5 /* locateSound.mp3 */; };
+		04DF78B6268CACA000FDDEF5 /* locateSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04DF78B4268CACA000FDDEF5 /* locateSound.mp3 */; };
+		04DF78B7268CACA000FDDEF5 /* locateSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04DF78B4268CACA000FDDEF5 /* locateSound.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +60,7 @@
 		0493E82A229A26ED00916014 /* begin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = begin.mp3; sourceTree = "<group>"; };
 		0493E82C229A26F900916014 /* cold.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cold.mp3; sourceTree = "<group>"; };
 		0493E82E229A270000916014 /* hot.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hot.mp3; sourceTree = "<group>"; };
+		04DF78B4268CACA000FDDEF5 /* locateSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = locateSound.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +99,7 @@
 				0493E82C229A26F900916014 /* cold.mp3 */,
 				0493E82E229A270000916014 /* hot.mp3 */,
 				04022AB52648488E00BC22F1 /* amadeus.mp3 */,
+				04DF78B4268CACA000FDDEF5 /* locateSound.mp3 */,
 			);
 			sourceTree = "<group>";
 		};
@@ -257,6 +262,7 @@
 				0493E82B229A26ED00916014 /* begin.mp3 in Resources */,
 				0493E82D229A26F900916014 /* cold.mp3 in Resources */,
 				0430846B2293400800DA317A /* LaunchScreen.storyboard in Resources */,
+				04DF78B5268CACA000FDDEF5 /* locateSound.mp3 in Resources */,
 				043084682293400800DA317A /* Assets.xcassets in Resources */,
 				043084662293400600DA317A /* Main.storyboard in Resources */,
 				04022AB62648488E00BC22F1 /* amadeus.mp3 in Resources */,
@@ -267,6 +273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04DF78B6268CACA000FDDEF5 /* locateSound.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +281,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04DF78B7268CACA000FDDEF5 /* locateSound.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
