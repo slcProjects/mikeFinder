@@ -11,7 +11,7 @@ import MediaPlayer
 
 
 
-protocol HandleMapSearch: class {
+protocol HandleMapSearch: AnyObject {
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
